@@ -1,0 +1,30 @@
+name: Process Video  # 工作流程的名称
+
+on:
+  workflow_dispatch:  # 手动触发工作流程
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # 使用最新的 Ubuntu 环境
+
+    steps:
+      - name: Checkout repository  # 签出仓库代码
+        uses: actions/checkout@v2
+
+      - name: Set up ffmpeg  # 安装 ffmpeg
+        run: |
+          sudo apt update  # 更新软件包列表
+          sudo apt install -y ffmpeg  # 安装 ffmpeg
+
+      - name: Run video processing script  # 运行视频处理脚本
+        run: |
+          chmod +x process_video.sh  # 给予脚本执行权限
+          ./process_video.sh input/input_video.mp4 input/input_image.jpg  # 运行脚本，处理视频和音频
+
+      - name: Upload processed video and audio  # 上传处理后的视频和音频
+        uses: actions/upload-artifact@v2
+        with:
+          name: processed-files  # 构件的名称
+          path: |
+            output.mp4  # 要上传的输出视频文件
+            output.mp3  # 要上传的输出音频文件
