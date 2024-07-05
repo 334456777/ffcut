@@ -46,6 +46,3 @@ done
 
 # Merge segments
 ffmpeg -loglevel quiet -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
-
-# Clean up
-rm "${temp_files[@]}" "$concat_file" silence_log.txt
