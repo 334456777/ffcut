@@ -33,7 +33,7 @@ jobs:
           aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.mp4 ./input.mp4
 
       - name: Run Go
-        run: go run main.go
+        run: go run process_video.go
 
       - name: Upload file to S3
         run: |
