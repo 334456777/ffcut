@@ -25,13 +25,13 @@ jobs:
 
       - name: Download file from S3
         run: |
-          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.mp4 ./input.mp4
+          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.mp4 ./input.mp4 --quiet
 
       - name: Run video processing script
         run: |
           chmod +x process_video.sh
-          ./process_video.sh input.mp4
+          ./process_video.sh ./input.mp4
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4
+          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4 --quiet
