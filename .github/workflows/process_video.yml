@@ -26,17 +26,3 @@ jobs:
           chmod +x ./.github/update-repo.sh
           ./process_video.sh input_video.mp4  # 运行脚本，处理视频
           rm input_video.mp4
-
-      - name: Commit changes
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add .
-          git commit -m "Apply changes from GitHub Actions"
-
-      - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          github_token: ${{ secrets.GHP_8 }}
-          branch: main
-
