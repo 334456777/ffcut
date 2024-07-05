@@ -30,5 +30,5 @@ jobs:
         with:
           name: processed-files  # 构件的名称
           path: |
-            output.mp4  # 要上传的输出视频文件
-            output.mp3  # 要上传的输出音频文件
+            output.mp4
+            output.mp3
