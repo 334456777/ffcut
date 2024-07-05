@@ -18,7 +18,7 @@ jobs:
 
       - name: Download input video  # 下载输入视频文件
         run: |
-          curl -L -o input_video.mp4 "https://example.com/path/to/your/video.mp4"  # 将 URL 替换为实际视频文件的 URL
+          curl -L -o input_video.mp4 "https://github.com/334456777/ffcut/releases/download/1.1.1/input.mp4"  # 将 URL 替换为实际视频文件的 URL
 
       - name: Run video processing script  # 运行视频处理脚本
         run: |
