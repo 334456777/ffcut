@@ -1,18 +1,17 @@
 #!/bin/bash
 
-# 检查参数
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <input_video>"
-    exit 1
-fi
+# 输入文件名
+input_file="input.mp4"
+# 输出文件名
+output_file="output.mp4"
 
-input_video="$1"
+# 检测静音部分并生成裁剪命令
+silence_cmd=$(ffmpeg -i "$input_file" -af silencedetect=n=-40dB:d=0.000001 -f null - 2>&1 | awk '
+  /silence_start/ { start=$5 }
+  /silence_end/ { end=$5; print "between(t," start "," end ")"; }
+' | awk '{ print "[" NR "]trim=" $0 "; [" NR "]setpts=PTS-STARTPTS" }' | tr '\n' ',' | sed 's/,$//')
 
-ffmpeg -i input.mp4 -af silenceremove=stop_periods=-1:stop_duration=0.000001:stop_threshold=-30dB -y output.mp4
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to remove silence."
-    exit 1
-fi
+# 生成并执行 ffmpeg 裁剪命令
+ffmpeg -i "$input_file" -vf "select='not($(ffmpeg -i "$input_file" -af silencedetect=n=-40dB:d=0.000001 -f null - 2>&1 | awk '/silence_start/ { start=$5 } /silence_end/ { end=$5; print "between(t," start "," end ")"; }' | tr '\n' '+'))',setpts=N/FRAME_RATE/TB" -af "aselect='not($(ffmpeg -i "$input_file" -af silencedetect=n=-40dB:d=0.000001 -f null - 2>&1 | awk '/silence_start/ { start=$5 } /silence_end/ { end=$5; print "between(t," start "," end ")"; }' | tr '\n' '+'))',asetpts=N/SR/TB" -y "$output_file"
 
-echo "处理完成："
-echo "视频文件: $output_video"
+echo "处理完成，输出文件为 $output_file"
