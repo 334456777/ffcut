@@ -25,7 +25,7 @@ jobs:
 
       - name: Download file from S3
         run: |
-          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.mp4 ./input.mp4
+          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/final.mp4 ./input.mp4
 
       - name: Run video processing script
         run: |
@@ -33,4 +33,4 @@ jobs:
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4
+          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/cut.mp4
