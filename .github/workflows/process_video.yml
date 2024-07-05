@@ -30,7 +30,7 @@ jobs:
       - name: Run video processing script
         run: |
           chmod +x process_video.sh
-          ./process_video.sh
+          ./process_video.sh ./input.mp4
 
       - name: Upload file to S3
         run: |
