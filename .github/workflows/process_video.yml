@@ -23,12 +23,11 @@ jobs:
       - name: Run video processing script  # 运行视频处理脚本
         run: |
           chmod +x process_video.sh  # 给予脚本执行权限
-          ./process_video.sh input_video.mp4 input/input_image.webp  # 运行脚本，处理视频和音频
+          ./process_video.sh input_video.mp4  # 运行脚本，处理视频
 
-      - name: Upload processed video and audio  # 上传处理后的视频和音频
+      - name: Upload processed video  # 上传处理后的视频
         uses: actions/upload-artifact@v2
         with:
           name: processed-files  # 构件的名称
           path: |
-            output.mp4
-            output.mp3
+            output.mp4  # 要上传的输出视频文件
