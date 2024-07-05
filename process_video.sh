@@ -18,8 +18,8 @@ ffmpeg -i "$input_video" -loop 1 -t 1 -i "$input_image" -filter_complex \
  [0:v]crop=${crop_params},fade=in:0:30,fade=out:870:30,format=yuva420p[main]; \
  [1:v]format=yuva420p,fade=t=out:st=0:d=1:alpha=1[image_in]; \
  [main][image_in]overlay=eof_action=pass[part1]; \
- [part1]fade=t=in:st=0:d=1:alpha=1[image_out]; \
- [image_out]overlay=eof_action=pass[final]" \
+ [part1]fade=t=in:st=0:d=1:alpha=1[final]; \
+ [final]overlay=eof_action=pass" \
 -map "[final]" -map "[a]" -c:v libx264 -c:a aac -strict experimental output.mp4
 if [ $? -ne 0 ]; then
     echo "Error: Failed to process video."
