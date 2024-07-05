@@ -4,27 +4,36 @@
 input_file="input.mp4"
 # 输出文件名
 output_file="output.mp4"
+# 临时文件名
+silence_log="silence.log"
+silences_txt="silences.txt"
 
-# 检测静音部分并生成裁剪命令
-ffmpeg -i "$input_file" -af silencedetect=n=-40dB:d=0.000001 -f null - 2>&1 | awk '
-  /silence_start/ { start=$5 }
-  /silence_end/ { end=$5; print "between(t," start "," end ")"; }
-' > silences.txt
+# 检测静音部分并生成时间戳文件
+ffmpeg -i "$input_file" -af silencedetect=n=-40dB:d=0.000001 -f null - 2> "$silence_log"
+
+# 解析时间戳文件并生成裁剪命令
+awk '/silence_start/ { start=$5 } /silence_end/ { end=$5; print "between(t," start "," end ")"; }' "$silence_log" > "$silences_txt"
 
 # 如果没有静音部分，直接复制文件
-if [ ! -s silences.txt ]; then
+if [ ! -s "$silences_txt" ]; then
   cp "$input_file" "$output_file"
   echo "没有检测到静音部分，输出文件为 $output_file"
   exit 0
 fi
 
-# 生成过滤器字符串
-filter_string=$(awk '{ print "[" NR "]trim=" $0 "; [" NR "]setpts=PTS-STARTPTS" }' silences.txt | tr '\n' ',' | sed 's/,$//')
+# 创建一个过滤器文件
+filter_file="filters.txt"
+echo "" > "$filter_file"
 
-# 生成并执行 ffmpeg 裁剪命令
-ffmpeg -i "$input_file" -vf "select='not($(awk '{print $0}' silences.txt | tr '\n' '+'))',setpts=N/FRAME_RATE/TB" -af "aselect='not($(awk '{print $0}' silences.txt | tr '\n' '+'))',asetpts=N/SR/TB" -y "$output_file"
+# 遍历每个静音段并生成相应的过滤器
+while read -r line; do
+  echo "trim=$line,setpts=PTS-STARTPTS" >> "$filter_file"
+done < "$silences_txt"
 
-echo "处理完成，输出文件为 $output_file"
+# 使用生成的过滤器文件进行裁剪
+ffmpeg -i "$input_file" -filter_complex_script "$filter_file" -y "$output_file"
 
 # 清理临时文件
-rm silences.txt
+rm "$silence_log" "$silences_txt" "$filter_file"
+
+echo "处理完成，输出文件为 $output_file"
