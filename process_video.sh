@@ -1,17 +1,47 @@
 #!/bin/bash
 
-# 检查参数
-if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <input_video>"
-    exit 1
+input_file=$1
+output_file="output.mp4"
+
+# Step 1: Detect silence and save the log
+ffmpeg -i $input_file -af silencedetect=n=-50dB:d=2 -f null - 2> silence_log.txt
+
+# Step 2: Parse the log to find non-silent segments
+segments=()
+last_end=0
+while read -r line; do
+  if [[ $line == *"silence_start"* ]]; then
+    silence_start=$(echo $line | grep -oP '(?<=silence_start: )[^ ]+')
+    if (( $(echo "$silence_start > $last_end" | bc -l) )); then
+      segments+=("-ss $last_end -to $silence_start")
+    fi
+  elif [[ $line == *"silence_end"* ]]; then
+    last_end=$(echo $line | grep -oP '(?<=silence_end: )[^ ]+')
+  fi
+done < silence_log.txt
+
+# Include the final segment after the last silence
+duration=$(ffmpeg -i $input_file 2>&1 | grep Duration | awk '{print $2}' | tr -d ,)
+if (( $(echo "$duration > $last_end" | bc -l) )); then
+  segments+=("-ss $last_end")
 fi
 
-input_video="$1"
-output_video="output.mp4"
+# Step 3: Extract and concatenate segments
+temp_files=()
+for segment in "${segments[@]}"; do
+  temp_file=$(mktemp --suffix=.mp4)
+  ffmpeg -i $input_file $segment -c copy $temp_file
+  temp_files+=("$temp_file")
+done
 
-# 步骤: 去除静音部分
-ffmpeg -i "$input_video" -af silenceremove=start_periods=1:stop_periods=-1:stop_duration=0.2:start_threshold=-45dB:stop_threshold=-45dB "$output_video"
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to remove silence."
-    exit 1
-fi
+# Create concat file
+concat_file=$(mktemp)
+for f in "${temp_files[@]}"; do
+  echo "file '$f'" >> $concat_file
+done
+
+# Merge segments
+ffmpeg -f concat -safe 0 -i $concat_file -c copy $output_file
+
+# Clean up
+rm "${temp_files[@]}" $concat_file silence_log.txt
