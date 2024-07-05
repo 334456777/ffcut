@@ -11,15 +11,17 @@ jobs:
       - name: Checkout repository  # 签出仓库代码
         uses: actions/checkout@v2
         
-      - name: setup go
-        uses: actions/setup-go@v3
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          go-version: '1.18'
+          python-version: '3.x'
 
-      - name: setup ffmpeg  # 安装 ffmpeg
+      - name: setup ffmpeg
         run: |
-          sudo apt update  # 更新软件包列表
-          sudo apt install -y ffmpeg  # 安装 ffmpeg
+          python -m pip install --upgrade pip
+          pip install ffmpeg-python
+          sudo apt update
+          sudo apt install -y ffmpeg
         
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -32,8 +34,8 @@ jobs:
         run: |
           aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.mp4 ./input.mp4
 
-      - name: Run Go
-        run: go run process_video.go
+      - name: Run py
+        run: python ./process_video.py input.mp4 output.mp4
 
       - name: Upload file to S3
         run: |
