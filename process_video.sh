@@ -10,7 +10,7 @@ input_video="$1"
 output_video="output.mp4"
 
 # 步骤: 去除静音部分
-ffmpeg -i "$input_video" -af silenceremove=stop_periods=-1:stop_duration=0.3:stop_threshold=0dB "$output_video"
+ffmpeg -i "$input_video" -af silenceremove=stop_periods=-1:stop_duration=0.3:stop_threshold=-30dB "$output_video"
 if [ $? -ne 0 ]; then
     echo "Error: Failed to remove silence."
     exit 1
