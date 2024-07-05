@@ -2,8 +2,8 @@
 
 input_file=$1
 output_file="output.mp4"
-silence_threshold=-45dB
-silence_duration=0.2
+silence_threshold=-40dB
+silence_duration=1
 
 # Step 1: Detect silence and save the log
 ffmpeg -i "$input_file" -af silencedetect=n=$silence_threshold:d=$silence_duration -f null - 2> silence_log.txt
