@@ -4,7 +4,7 @@ input_file=$1
 output_file="output.mp4"
 
 # Step 1: Detect silence and save the log
-ffmpeg -i $input_file -af silencedetect=n=-50dB:d=2 -f null - 2> silence_log.txt
+ffmpeg -i "$input_file" -af silencedetect=n=-50dB:d=2 -f null - 2> silence_log.txt
 
 # Step 2: Parse the log to find non-silent segments
 segments=()
@@ -21,27 +21,29 @@ while read -r line; do
 done < silence_log.txt
 
 # Include the final segment after the last silence
-duration=$(ffmpeg -i $input_file 2>&1 | grep Duration | awk '{print $2}' | tr -d ,)
+duration=$(ffmpeg -i "$input_file" 2>&1 | grep Duration | awk '{print $2}' | tr -d ,)
 if (( $(echo "$duration > $last_end" | bc -l) )); then
   segments+=("-ss $last_end")
 fi
 
 # Step 3: Extract and concatenate segments
+counter=0
 temp_files=()
 for segment in "${segments[@]}"; do
-  temp_file=$(mktemp --suffix=.mp4)
-  ffmpeg -i $input_file $segment -c copy $temp_file
+  temp_file="temp_part_$counter.mp4"
+  ffmpeg -y -i "$input_file" $segment -c copy "$temp_file"
   temp_files+=("$temp_file")
+  counter=$((counter + 1))
 done
 
 # Create concat file
-concat_file=$(mktemp)
+concat_file="concat_list.txt"
 for f in "${temp_files[@]}"; do
-  echo "file '$f'" >> $concat_file
+  echo "file '$f'" >> "$concat_file"
 done
 
 # Merge segments
-ffmpeg -f concat -safe 0 -i $concat_file -c copy $output_file
+ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
 
 # Clean up
-rm "${temp_files[@]}" $concat_file silence_log.txt
+rm "${temp_files[@]}" "$concat_file" silence_log.txt
