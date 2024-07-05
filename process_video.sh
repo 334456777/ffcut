@@ -2,9 +2,11 @@
 
 input_file=$1
 output_file="output.mp4"
+silence_threshold=-45dB
+silence_duration=0.2
 
 # Step 1: Detect silence and save the log
-ffmpeg -i "$input_file" -af silencedetect=n=-50dB:d=2 -f null - 2> silence_log.txt
+ffmpeg -i "$input_file" -af silencedetect=n=$silence_threshold:d=$silence_duration -f null - 2> silence_log.txt
 
 # Step 2: Parse the log to find non-silent segments
 segments=()
