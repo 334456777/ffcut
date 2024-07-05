@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# 检查参数
 if [ "$#" -ne 1 ]; then
     echo "Usage: $0 <input_video>"
     exit 1
