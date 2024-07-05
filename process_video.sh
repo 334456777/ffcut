@@ -35,7 +35,7 @@ fi
 
 # 运行 ffmpeg 命令
 ffmpeg -i "$input_video" -loop 1 -t 1 -i "$input_image" -filter_complex \
-"[0:a]silenceremove=stop_periods=-1:stop_threshold=-20dB[aout]; \
+"[0:a]silenceremove=stop_periods=-1:stop_threshold=-20dB,asetpts=N/SR/TB[aout]; \
  [0:v]cropdetect=limit=24:round=2:reset=1, crop=iw:ih:iw-2*overlay_w/2:ih-2*overlay_h/2, format=yuva420p[video]; \
  [video]fade=t=in:st=0:d=1:alpha=1,fade=t=out:st=7:d=1:alpha=1[video_faded]; \
  [1:v]format=yuva420p,split[image_in][image_out]; \
@@ -43,8 +43,8 @@ ffmpeg -i "$input_video" -loop 1 -t 1 -i "$input_image" -filter_complex \
  [image_out]fade=t=in:st=0:d=1:alpha=1[image_out_faded]; \
  [image_in_faded][video_faded]overlay=eof_action=pass[part1]; \
  [part1][image_out_faded]overlay=eof_action=pass[final_video]" \
--map "[final_video]" -map aout -c:v libx264 -c:a aac "$output_video" \
--map aout -c:a libmp3lame -q:a 0 "$output_audio"
+-map "[final_video]" -map "[aout]" -c:v libx264 -c:a aac "$output_video" \
+-map "[aout]" -c:a libmp3lame -q:a 0 "$output_audio"
 
 # 检查 ffmpeg 命令是否成功
 if [ $? -ne 0 ]; then
