@@ -12,7 +12,7 @@ silences_txt="silences.txt"
 ffmpeg -i "$input_file" -af silencedetect=n=-40dB:d=0.000001 -f null - 2> "$silence_log"
 
 # 解析时间戳文件并生成裁剪命令
-awk '/silence_start/ { start=$5 } /silence_end/ { end=$5; print "between(t," start "," end ")"; }' "$silence_log" > "$silences_txt"
+awk '/silence_start/ { start=$5 } /silence_end/ { end=$5; print start "," end; }' "$silence_log" > "$silences_txt"
 
 # 如果没有静音部分，直接复制文件
 if [ ! -s "$silences_txt" ]; then
@@ -26,8 +26,8 @@ filter_file="filters.txt"
 echo "" > "$filter_file"
 
 # 遍历每个静音段并生成相应的过滤器
-while read -r line; do
-  echo "trim=$line,setpts=PTS-STARTPTS" >> "$filter_file"
+while read -r start end; do
+  echo "trim=start_frame=$start:end_frame=$end,setpts=PTS-STARTPTS" >> "$filter_file"
 done < "$silences_txt"
 
 # 使用生成的过滤器文件进行裁剪
