@@ -28,7 +28,7 @@ jobs:
           aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4 ./input.mp4
           aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.srt ./input.srt
 
-      - name: srt2video
+      - name: Embed subtitles into video
         run: |
           ffmpeg -i input.mp4 -vf "subtitles=input.srt" -c:a copy output.mp4
 
