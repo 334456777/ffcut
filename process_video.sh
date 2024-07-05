@@ -40,10 +40,10 @@ ffmpeg -i "$input_video" -loop 1 -t 1 -i "$input_image" -filter_complex \
  [video]fade=t=in:st=0:d=1:alpha=1,fade=t=out:st=6:d=1:alpha=1[video_faded]; \
  [1:v]format=yuva420p,fade=t=out:st=0:d=1:alpha=1[image_in]; \
  [1:v]format=yuva420p,fade=t=in:st=0:d=1:alpha=1[image_out]; \
- [image_in][video_faded]overlay[eof_action=pass][part1]; \
- [part1][image_out]overlay=eof_action=pass[final]" \
--map "[final]" -map "[aout]" -c:v libx264 -c:a aac "$output_video" \
--map "[aout]" -c:a libmp3lame -q:a 0 "$output_audio"
+ [image_in][video_faded]overlay=eof_action=pass[part1]; \
+ [part1][image_out]overlay=eof_action=pass[final_video]" \
+-map "[final_video]" -map aout -c:v libx264 -c:a aac "$output_video" \
+-map aout -c:a libmp3lame -q:a 0 "$output_audio"
 
 # 检查 ffmpeg 命令是否成功
 if [ $? -ne 0 ]; then
