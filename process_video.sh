@@ -6,24 +6,24 @@ silence_threshold=-45dB
 silence_duration=0.2
 
 # Step 1: Detect silence and save the log
-ffmpeg -loglevel quiet -i "$input_file" -af silencedetect=n=$silence_threshold:d=$silence_duration -f null - 2> silence_log.txt
+ffmpeg -i "$input_file" -af silencedetect=n=$silence_threshold:d=$silence_duration -f null - 2> silence_log.txt
 
 # Step 2: Parse the log to find non-silent segments
 segments=()
 last_end=0
 while read -r line; do
   if [[ $line == *"silence_start"* ]]; then
-    silence_start=$(echo "$line" | grep -oP '(?<=silence_start: )[^ ]+')
+    silence_start=$(echo $line | grep -oP '(?<=silence_start: )[^ ]+')
     if (( $(echo "$silence_start > $last_end" | bc -l) )); then
       segments+=("-ss $last_end -to $silence_start")
     fi
   elif [[ $line == *"silence_end"* ]]; then
-    last_end=$(echo "$line" | grep -oP '(?<=silence_end: )[^ ]+')
+    last_end=$(echo $line | grep -oP '(?<=silence_end: )[^ ]+')
   fi
 done < silence_log.txt
 
 # Include the final segment after the last silence
-duration=$(ffmpeg -loglevel quiet -i "$input_file" 2>&1 | grep "Duration" | awk '{print $2}' | tr -d ,)
+duration=$(ffmpeg -i "$input_file" 2>&1 | grep Duration | awk '{print $2}' | tr -d ,)
 if (( $(echo "$duration > $last_end" | bc -l) )); then
   segments+=("-ss $last_end")
 fi
@@ -33,7 +33,7 @@ counter=0
 temp_files=()
 for segment in "${segments[@]}"; do
   temp_file="temp_part_$counter.mp4"
-  ffmpeg -loglevel quiet -y -i "$input_file" $segment -c copy "$temp_file"
+  ffmpeg -y -i "$input_file" $segment -c copy "$temp_file"
   temp_files+=("$temp_file")
   counter=$((counter + 1))
 done
@@ -45,7 +45,7 @@ for f in "${temp_files[@]}"; do
 done
 
 # Merge segments
-ffmpeg -loglevel quiet -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
+ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
 
 # Clean up
 rm "${temp_files[@]}" "$concat_file" silence_log.txt
