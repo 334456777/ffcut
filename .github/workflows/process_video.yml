@@ -16,6 +16,10 @@ jobs:
           sudo apt update  # 更新软件包列表
           sudo apt install -y ffmpeg  # 安装 ffmpeg
 
+      - name: download video  # 下载视频文件
+        run: |
+          wget https://github.com/334456777/ffcut/releases/download/1.1.1/input.mp4
+          
       - name: Run video processing script  # 运行视频处理脚本
         run: |
           chmod +x process_video.sh  # 给予脚本执行权限
