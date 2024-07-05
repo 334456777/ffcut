@@ -33,7 +33,4 @@ done < "$silences_txt"
 # 使用生成的过滤器文件进行裁剪
 ffmpeg -i "$input_file" -filter_complex_script "$filter_file" -y "$output_file"
 
-# 清理临时文件
-rm "$silence_log" "$silences_txt" "$filter_file"
-
 echo "处理完成，输出文件为 $output_file"
