@@ -10,7 +10,7 @@ input_video="$1"
 input_image="$2"
 
 # 步骤 1: 去除静音部分
-ffmpeg -i "$input_video" -af "silenceremove=stop_periods=-1:stop_threshold=-20dB" -c:v copy temp1.mp4
+ffmpeg -i "$input_video" -af "silenceremove=stop_periods=-1:stop_threshold=0dB" -c:v copy temp1.mp4
 if [ $? -ne 0 ]; then
     echo "Error: Failed to remove silence."
     exit 1
