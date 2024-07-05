@@ -24,6 +24,7 @@ jobs:
         run: |
           chmod +x process_video.sh  # 给予脚本执行权限
           ./process_video.sh input_video.mp4  # 运行脚本，处理视频
+          ls
 
       - name: Upload processed video  # 上传处理后的视频
         uses: actions/upload-artifact@v2
