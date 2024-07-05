@@ -42,9 +42,9 @@ ffmpeg -i "$input_video" -loop 1 -t 1 -i "$input_image" -filter_complex \
  [image_in]fade=t=out:st=0:d=1:alpha=1[image_in_faded]; \
  [image_out]fade=t=in:st=0:d=1:alpha=1[image_out_faded]; \
  [image_in_faded][video_faded]overlay=eof_action=pass[part1]; \
- [part1][image_out_faded]overlay=eof_action=pass[final]" \
--map "[final]" -map "[aout]" -c:v libx264 -c:a aac "$output_video" \
--map "[aout]" -c:a libmp3lame -q:a 0 "$output_audio"
+ [part1][image_out_faded]overlay=eof_action=pass[final_video]" \
+-map "[final_video]" -map aout -c:v libx264 -c:a aac "$output_video" \
+-map aout -c:a libmp3lame -q:a 0 "$output_audio"
 
 # 检查 ffmpeg 命令是否成功
 if [ $? -ne 0 ]; then
