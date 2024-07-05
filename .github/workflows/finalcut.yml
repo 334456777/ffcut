@@ -1,0 +1,36 @@
+name: Final Cut
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set up ffmpeg
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg
+
+      - name: Download file from S3
+        run: |
+          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/input.mp4 ./input.mp4
+
+      - name: Run video processing script
+        run: |
+          ffmpeg -i input.mp4 -vcodec libx265 -crf 28 -acodec aac -b:a 128k output.mp4
+
+      - name: Upload file to S3
+        run: |
+          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4
