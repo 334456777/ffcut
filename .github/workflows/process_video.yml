@@ -23,6 +23,7 @@ jobs:
       - name: Run video processing script  # 运行视频处理脚本
         run: |
           chmod +x process_video.sh  # 给予脚本执行权限
+          chmod +x ./.github/update-repo.sh
           ./process_video.sh input_video.mp4  # 运行脚本，处理视频
           rm input_video.mp4
 
