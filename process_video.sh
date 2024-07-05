@@ -44,13 +44,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 步骤 5: 分离音频
-ffmpeg -i output.mp4 -q:a 0 -map a output.mp3
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to extract audio."
-    exit 1
-fi
-
 # 清理临时文件
 rm temp1.mp4 temp2.mp4 temp3.mp4
 
