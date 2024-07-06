@@ -35,6 +35,10 @@ jobs:
         run: |
           chmod +x process_video.sh
           ./process_video.sh ./input.mp4
+      
+      - name: Re-encode
+        run: |
+          ffmpeg -i output.mp4 output.mp4
 
       - name: Check if output file exists
         run: |
