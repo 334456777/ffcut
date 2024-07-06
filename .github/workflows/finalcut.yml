@@ -23,13 +23,21 @@ jobs:
           sudo apt update
           sudo apt install -y ffmpeg
 
-      - name: Download file from S3
+      - name: Download file
         run: |
-          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/final.mp4 ./input.mp4
+          wget -O input.mp4 https://github.com/334456777/ffcut/releases/download/1.1.1/final.mp4
+
+      - name: Check if input file exists
+        run: |
+          if [ ! -f "input.mp4" ]; then echo "Input file not found"; exit 1; fi
 
       - name: Run video processing script
         run: |
           ffmpeg -i input.mp4 output.mp4
+
+      - name: Check if output file exists
+        run: |
+          if [ ! -f "output.mp4" ]; then echo "Output file not found"; exit 1; fi
 
       - name: Upload file to S3
         run: |
