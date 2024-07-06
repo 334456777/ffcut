@@ -38,7 +38,7 @@ jobs:
       
       - name: Re-encode
         run: |
-          ffmpeg -i output.mp4 output.mp4
+          ffmpeg -y -i output.mp4 output.mp4
 
       - name: Check if output file exists
         run: |
