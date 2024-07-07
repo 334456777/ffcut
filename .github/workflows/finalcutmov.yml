@@ -1,0 +1,44 @@
+name: Final Cut
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Set up ffmpeg
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg
+
+      - name: Download file
+        run: |
+          wget -O input.mov https://github.com/334456777/ffcut/releases/download/1.1.1/final.mov
+
+      - name: Check if input file exists
+        run: |
+          if [ ! -f "input.mov" ]; then echo "Input file not found"; exit 1; fi
+
+      - name: Run video processing script
+        run: |
+          ffmpeg -i input.mov output.mp4
+
+      - name: Check if output file exists
+        run: |
+          if [ ! -f "output.mp4" ]; then echo "Output file not found"; exit 1; fi
+
+      - name: Upload file to S3
+        run: |
+          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/cut.mp4
