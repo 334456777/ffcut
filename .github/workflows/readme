@@ -1,3 +1,4 @@
 process_video.yml in: input.mp4 out: output.mp4
 srt2video.yml in: input.srt output.mp4 out: output2.mp4
 finalcut.yml in: final.mp4 out: cut.mp4
+finalcutmov.yml in: final.mov out: cut.mp4
