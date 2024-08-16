@@ -25,7 +25,7 @@ jobs:
 
       - name: Download file
         run: |
-          wget -O input.mp4 https://github.com/334456777/ffcut/releases/download/1.1.1/final.mp4
+          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/final.mp4 ./input.mp4 
 
       - name: Check if input file exists
         run: |
