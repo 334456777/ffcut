@@ -25,7 +25,7 @@ jobs:
 
       - name: Download file
         run: |
-          aws s3 cp s3://myawsvideoss/final.mov ./input.mov
+          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/final.mov ./input.mov
 
       - name: Check if input file exists
         run: |
