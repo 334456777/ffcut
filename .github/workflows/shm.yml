@@ -1,0 +1,29 @@
+name: shm
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+        
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: set config
+        run: |
+          URL="http://sosrff.tsu.ru/SR/shm.jpg"
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          FILENAME="shm_$TIMESTAMP.jpg"
+  
+      - name: download file
+        run: |
+          wget --timeout=30 -O "$FILENAME" "$URL"
+
+      - name: Upload file to S3
+        run: |
+          aws s3 cp "$FILENAME" s3://${{ secrets.S3_BUCKET_NAME }}/
