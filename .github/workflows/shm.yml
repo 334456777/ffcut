@@ -23,7 +23,7 @@ jobs:
   
       - name: download file
         run: |
-          wget --timeout=30 -O "$FILENAME" "$URL"
+          wget --timeout=30 -O "$FILENAME" http://sosrff.tsu.ru/SR/shm.jpg
 
       - name: Upload file to S3
         run: |
