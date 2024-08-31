@@ -2,7 +2,7 @@ name: shm
 
 on:
   schedule:
-    - cron: '35 16 * * *'
+    - cron: '35 16 */3 * *'
   workflow_dispatch:
 
 jobs:
