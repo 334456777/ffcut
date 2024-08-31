@@ -15,16 +15,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: set config
-        run: |
-          URL="http://sosrff.tsu.ru/SR/shm.jpg"
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          FILENAME="shm_$TIMESTAMP.jpg"
-  
       - name: download file
         run: |
           wget --timeout=30 -O shm.jpg http://sosrff.tsu.ru/SR/shm.jpg
 
       - name: Upload file to S3
         run: |
-          aws s3 cp "$FILENAME" s3://${{ secrets.S3_BUCKET_NAME }}/shm/
+          aws s3 cp "$FILENAME" s3://
