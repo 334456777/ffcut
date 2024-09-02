@@ -20,7 +20,14 @@ jobs:
       - name: download file
         run: |
           wget -q --timeout=30 -O ${{ secrets.NAME }} ${{ secrets.URL }}
+          wget -q --timeout=30 -O ${{ secrets.ONE_NAME }} ${{ secrets.ONE_URL }}
+          wget -q --timeout=30 -O ${{ secrets.TWO_NAME }} ${{ secrets.TWO_URL }}
+          wget -q --timeout=30 -O ${{ secrets.THR_NAME }} ${{ secrets.THR_URL }}
+
 
       - name: Upload file to S3
         run: |
           aws s3 cp ${{ secrets.NAME }} ${{ secrets.AWS_S3_NAME }} --quiet
+          aws s3 cp ${{ secrets.ONE_NAME }} ${{ secrets.AWS_S3_NAME }} --quiet
+          aws s3 cp ${{ secrets.TWO_NAME }} ${{ secrets.AWS_S3_NAME }} --quiet
+          aws s3 cp ${{ secrets.THR_NAME }} ${{ secrets.AWS_S3_NAME }} --quiet
