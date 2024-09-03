@@ -1,0 +1,35 @@
+name: Update Master Branch
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  update_branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        
+      - name: git init
+        run: git config --local user.name "GitHub Actions"; git config --local user.email "actions@github.com"
+
+      - name: Create a new orphan branch
+        run: git checkout --orphan latest_branch
+
+      - name: Add all files
+        run: git add -A
+
+      - name: Commit the changes
+        run: git commit -am "commit message"
+
+      - name: Delete the master branch
+        run: git branch -D master
+
+      - name: Rename current branch to master
+        run: git branch -m master
+
+      - name: Force push to master branch
+        run: git push -f origin master
