@@ -24,10 +24,10 @@ jobs:
         run: git commit -am "commit message"
 
       - name: Delete the master branch
-        run: git branch -D master
+        run: git branch -D main
 
       - name: Rename current branch to master
-        run: git branch -m master
+        run: git branch -m main
 
       - name: Force push to master branch
-        run: git push -f origin master
+        run: git push -f origin main
