@@ -1,8 +1,8 @@
 name: yml
 
 on:
-  schedule:
-    - cron: '40 16 * * *'
+  # schedule:
+  #   - cron: '40 16 * * *'
   workflow_dispatch:
 
 jobs:
