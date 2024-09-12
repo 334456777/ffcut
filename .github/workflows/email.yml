@@ -2,9 +2,8 @@ name: Send Daily Email
 
 on:
   schedule:
-    # 设定为每天早上9点运行 (使用UTC时间)
-    - cron: '0 0 * * *'
-  workflow_dispatch: # 允许手动触发
+    - cron: '40 16 * * *'
+  workflow_dispatch:
 
 jobs:
   send_email_job:
@@ -25,7 +24,7 @@ jobs:
         pip install smtplib email mime
 
     - name: Run Email Script
-      env: # 在这里使用GitHub Secrets存储敏感信息
+      env:
         SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
         RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
