@@ -48,4 +48,4 @@ done
 ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
 
 # Clean up
-rm "${temp_files[@]}" "$concat_file" silence_log.txt
+# rm "${temp_files[@]}" "$concat_file" silence_log.txt
