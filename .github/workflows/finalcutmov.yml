@@ -25,7 +25,7 @@ jobs:
 
       - name: Download file
         run: |
-          aws s3 cp s3://${{ secrets.S3_BUCKET_NAME }}/final.mov ./input.mov
+          wget -O input.mov https://github.com/334456777/ffcut/releases/download/1.1.1/input.mov
 
       - name: Check if input file exists
         run: |
