@@ -25,11 +25,11 @@ jobs:
 
       - name: Download file
         run: |
-          wget -O input.mp4 https://github.com/334456777/ffcut/releases/download/1.1.1/video.mp4 
+          wget -O input_video.mp4 https://github.com/334456777/ffcut/releases/download/1.1.1/video.mp4 
 
       - name: Check if input file exists
         run: |
-          if [ ! -f "input.mp4" ]; then echo "Input file not found"; exit 1; fi
+          if [ ! -f "input_video.mp4" ]; then echo "Input file not found"; exit 1; fi
 
       - name: Run video processing script
         run: |
@@ -37,8 +37,8 @@ jobs:
 
       - name: Check if output file exists
         run: |
-          if [ ! -f "output.mp4" ]; then echo "Output file not found"; exit 1; fi
+          if [ ! -f "output_audio.mp4" ]; then echo "Output file not found"; exit 1; fi
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/sound.mp4
+          aws s3 cp ./output_audio.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/audio.mp4
