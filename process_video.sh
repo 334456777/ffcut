@@ -22,6 +22,11 @@ while read -r line; do
   fi
 done < silence_log.txt
 
+if [ ! -s silence_log.txt ]; then
+    echo "No silence detected, exiting."
+    exit 1
+fi
+
 # Include the final segment after the last silence
 duration=$(ffmpeg -i "$input_file" 2>&1 | grep Duration | awk '{print $2}' | tr -d ,)
 if (( $(echo "$duration > $last_end" | bc -l) )); then
@@ -48,4 +53,26 @@ done
 ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
 
 # Clean up
-# rm "${temp_files[@]}" "$concat_file" silence_log.txt
+# 删除temp_files数组中的每个文件
+if [ -n "${temp_files[@]}" ]; then
+    rm "${temp_files[@]}"
+    echo "Deleted temp files: ${temp_files[@]}"
+else
+    echo "No temp files to delete."
+fi
+
+# 删除concat_file
+if [ -f "$concat_file" ]; then
+    rm "$concat_file"
+    echo "Deleted: $concat_file"
+else
+    echo "File not found: $concat_file"
+fi
+
+# 删除silence_log.txt
+if [ -f "silence_log.txt" ]; then
+    rm "silence_log.txt"
+    echo "Deleted: silence_log.txt"
+else
+    echo "File not found: silence_log.txt"
+fi
