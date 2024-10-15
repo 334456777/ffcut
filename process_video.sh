@@ -2,7 +2,7 @@
 
 input_file=$1
 output_file="output.mp4"
-silence_threshold=-40dB
+silence_threshold=0dB
 silence_duration=1
 
 # Step 1: Detect silence and save the log
