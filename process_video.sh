@@ -2,7 +2,7 @@
 
 input_file=$1
 output_file="output.mp4"
-silence_threshold=-40dB
+silence_threshold=0dB
 silence_duration=1
 
 # Step 1: Detect silence and save the log
@@ -49,12 +49,17 @@ for f in "${temp_files[@]}"; do
   echo "file '$f'" >> "$concat_file"
 done
 
+if [ ! -s concat_list.txt ]; then
+    echo "No concat list, exiting."
+    exit 1
+fi
+
 # Merge segments
 ffmpeg -y -f concat -safe 0 -i "$concat_file" -c copy "$output_file"
 
 # Clean up
 # 删除temp_files数组中的每个文件
-if [ -n "${temp_files[@]}" ]; then
+if [ "${#temp_files[@]}" -gt 0 ]; then
     rm "${temp_files[@]}"
     echo "Deleted temp files: ${temp_files[@]}"
 else
