@@ -34,7 +34,7 @@ jobs:
       - name: Run video processing script
         run: |
           # chmod +x process_video.sh
-          ./process_video.sh ./input.mp4
+          ./sil.sh
 
       - name: Check if output file exists
         run: |
