@@ -33,21 +33,12 @@ jobs:
 
       - name: Run video processing script
         run: |
-          # chmod +x process_video.sh
           ./sil.sh
 
       - name: Check if output file exists
         run: |
           if [ ! -f "output.mp4" ]; then echo "Output file not found"; exit 1; fi
-      
-      - name: Re-encode
-        run: |
-          ffmpeg -y -i output.mp4 output2.mp4
-
-      - name: Check if output file exists
-        run: |
-          if [ ! -f "output2.mp4" ]; then echo "Output file not found"; exit 1; fi
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ./output2.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4
+          aws s3 cp ./output.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/output.mp4
