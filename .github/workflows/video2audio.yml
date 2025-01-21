@@ -34,7 +34,6 @@ jobs:
       - name: Run video processing script
         run: |
           ffmpeg -i input_video.mp4 -q:a 0 -map a output_audio.mp3
-          ffmpeg -i  -vn -acodec copy 
 
       - name: Check if output file exists
         run: |
