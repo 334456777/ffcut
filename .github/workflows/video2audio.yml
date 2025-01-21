@@ -41,4 +41,4 @@ jobs:
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ./output_audio.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/audio.mp3
+          aws s3 cp ./output_audio.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/audio.mp4
