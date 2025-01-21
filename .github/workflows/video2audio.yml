@@ -33,12 +33,12 @@ jobs:
 
       - name: Run video processing script
         run: |
-          ffmpeg -i input_video.mp4 -vn -acodec copy output_audio.mp4
+          ffmpeg -i input_video.mp4 -vn -acodec copy output_audio.mp3
 
       - name: Check if output file exists
         run: |
-          if [ ! -f "output_audio.mp4" ]; then echo "Output file not found"; exit 1; fi
+          if [ ! -f "output_audio.mp3" ]; then echo "Output file not found"; exit 1; fi
 
       - name: Upload file to S3
         run: |
-          aws s3 cp ./output_audio.mp4 s3://${{ secrets.S3_BUCKET_NAME }}/audio.mp4
+          aws s3 cp ./output_audio.mp3 s3://${{ secrets.S3_BUCKET_NAME }}/audio.mp3
